@@ -1,34 +1,29 @@
 package com.example.overlay_sample
 
-import android.graphics.PixelFormat
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.WindowManager
+import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ToDo:オーバーレイのパーミッションがないためクラッシュする模様
+        val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // 結果の処理
+            }
+        }
 
-        // WindowManagerのインスタンスを取得
-        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-
-        // 端末の画面の設定(オーバーレイ時に画面をどのような状態にするか)
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,//ウィンドウの幅と高さをコンテンツに合わせる
-            WindowManager.LayoutParams.WRAP_CONTENT,//ウィンドウの幅と高さをコンテンツに合わせる
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,//オーバーレイウィンドウが他のアプリの上に表示されることを示します。
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,//このウィンドウはユーザーからの操作を受け付けないことを意味します。
-            PixelFormat.TRANSLUCENT//ウィンドウのピクセルフォーマットを透明に設定します。これにより、ウィンドウが透明な背景を持つことができます。
-        )
-
-        // オーバーレイで表示させる画面を取得
-        val contentView: View = findViewById(android.R.id.content)
-
-        // オーバーレイで表示する画面を追加
-        windowManager.addView(contentView, params)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+            launcher.launch(intent)
+        }
     }
 }
