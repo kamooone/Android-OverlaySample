@@ -44,6 +44,10 @@ class OverlayService : Service() {
             PixelFormat.TRANSLUCENT
         )
 
+        // 画面右上に表示するための調整
+        params.x = 500  // 画面の左端からの距離
+        params.y = -800  // 画面の上端からの距離
+
         // ウィンドウにオーバーレイを追加
         windowManager.addView(overlayView, params)
     }
