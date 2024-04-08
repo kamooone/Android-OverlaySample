@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 
 class OverlayService : Service() {
@@ -25,9 +26,9 @@ class OverlayService : Service() {
         // オーバーレイのビューを作成
         overlayView = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null)
 
-        // TextViewにテキストを設定
-        val textView = overlayView.findViewById<TextView>(R.id.textView)
-        textView.text = "オーバーレイ表示"
+        // ImageViewに画像を設定
+        val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
+        imageView.setImageResource(R.drawable.battery_mark1)
 
         // WindowManager.LayoutParamsを設定
         val params = WindowManager.LayoutParams(
@@ -57,3 +58,4 @@ class OverlayService : Service() {
         return null
     }
 }
+
