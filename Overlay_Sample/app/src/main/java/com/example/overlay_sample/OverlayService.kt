@@ -3,14 +3,18 @@ package com.example.overlay_sample
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
+import android.os.BatteryManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+
 
 class OverlayService : Service() {
 
@@ -29,6 +33,14 @@ class OverlayService : Service() {
         // ImageViewに画像を設定
         val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
         imageView.setImageResource(R.drawable.battery_mark1)
+
+        // TextViewにテキストを設定
+        val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        val batteryStatus = this.registerReceiver(null, intentFilter)
+
+        val batteryLevel = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+        val textView = overlayView.findViewById<TextView>(R.id.textView)
+        textView.text = "電池残量" + batteryLevel.toString() + "%"
 
         // WindowManager.LayoutParamsを設定
         val params = WindowManager.LayoutParams(
@@ -62,4 +74,3 @@ class OverlayService : Service() {
         return null
     }
 }
-
