@@ -10,12 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            // オーバーレイ許可の結果を受け取る処理
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-                // パーミッションがまだ許可されていない場合はOverlayServiceを開始する
-                startService(Intent(this, OverlayService::class.java))
-            }
+        // オーバーレイ許可の結果を受け取る処理
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+            // パーミッションがまだ許可されていない場合はOverlayServiceを開始する
+            startService(Intent(this, OverlayService::class.java))
         }
     }
 
