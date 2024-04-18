@@ -3,6 +3,7 @@ package com.example.overlay_sample
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
@@ -16,11 +17,13 @@ class OverlayService : Service() {
 
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: View
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         overlayView = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null)
+        sharedPreferences = getSharedPreferences("OverlayPrefs", Context.MODE_PRIVATE)
 
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -37,13 +40,19 @@ class OverlayService : Service() {
         params.x = 500
         params.y = -800
         windowManager.addView(overlayView, params)
+
+        // 保存されたバッテリーレベルを読み込み、表示を更新
+        val batteryLevel = sharedPreferences.getInt("batteryLevel", 0)
+        val batteryStatus = sharedPreferences.getInt("batteryStatus", 0)
+        updateOverlay(batteryLevel, batteryStatus)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // バッテリー状態の変化に応じてオーバーレイの表示を更新
+        // バッテリー状態の変化に応じてオーバーレイの表示を更新し、最新の状態を保存
         val batteryLevel = intent?.getIntExtra("batteryLevel", 0) ?: 0
         val batteryStatus = intent?.getIntExtra("batteryStatus", 0) ?: 0
         updateOverlay(batteryLevel, batteryStatus)
+        saveBatteryLevel(batteryLevel, batteryStatus)
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -56,6 +65,13 @@ class OverlayService : Service() {
         val textView = overlayView.findViewById<TextView>(R.id.textView)
         // バッテリーレベルの表示を更新
         textView.text = "電池残量: $batteryLevel%"
+    }
+
+    private fun saveBatteryLevel(batteryLevel: Int, batteryStatus: Int) {
+        val editor = sharedPreferences.edit()
+        editor.putInt("batteryLevel", batteryLevel)
+        editor.putInt("batteryStatus", batteryStatus)
+        editor.apply()
     }
 
     // アプリを起動していない時でもオーバーレイの表示の更新を行うため
