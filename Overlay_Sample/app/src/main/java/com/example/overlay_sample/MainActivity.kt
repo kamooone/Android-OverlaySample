@@ -14,12 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            // オーバーレイ許可の結果を受け取る処理
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
-                // パーミッションがまだ許可されていない場合はOverlayServiceを開始する
-                startService(Intent(this, OverlayService::class.java))
-            }
+        // オーバーレイ許可の結果を受け取る処理
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+            // パーミッションがまだ許可されていない場合はOverlayServiceを開始する
+            startOverlayServiceAndRegisterBroadcastReceiver()
         }
     }
 
@@ -44,17 +42,22 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
             launcher.launch(intent)
         } else {
-            // パーミッションが既に許可されている場合はOverlayServiceを開始する
-            startService(Intent(this, OverlayService::class.java))
+            // パーミッションが既に許可されている場合はOverlayServiceを開始し、ブロードキャストを登録する
+            startOverlayServiceAndRegisterBroadcastReceiver()
         }
+    }
 
+    // オーバーレイの表示を開始し、ブロードキャストを登録する関数
+    private fun startOverlayServiceAndRegisterBroadcastReceiver() {
+        startService(Intent(this, OverlayService::class.java))
         // バッテリー状態の変化を監視するBroadcastReceiverを登録
         registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // BroadcastReceiverの登録を解除
-        unregisterReceiver(batteryReceiver)
-    }
+    // アプリを起動していない時でもオーバーレイの表示の更新を行うため
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        // BroadcastReceiverの登録を解除
+//        unregisterReceiver(batteryReceiver)
+//    }
 }

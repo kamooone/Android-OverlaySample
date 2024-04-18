@@ -58,10 +58,11 @@ class OverlayService : Service() {
         textView.text = "電池残量: $batteryLevel%"
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        windowManager.removeView(overlayView)
-    }
+    // アプリを起動していない時でもオーバーレイの表示の更新を行うため
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        windowManager.removeView(overlayView)
+//    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
