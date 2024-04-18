@@ -3,18 +3,14 @@ package com.example.overlay_sample
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.PixelFormat
-import android.os.BatteryManager
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
-
 
 class OverlayService : Service() {
 
@@ -23,50 +19,47 @@ class OverlayService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-        // ウィンドウマネージャーを取得
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-
-        // オーバーレイのビューを作成
         overlayView = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null)
 
-        // ImageViewに画像を設定
-        val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
-        imageView.setImageResource(R.drawable.battery_mark1)
-
-        // TextViewにテキストを設定
-        val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-        val batteryStatus = this.registerReceiver(null, intentFilter)
-
-        val batteryLevel = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-        val textView = overlayView.findViewById<TextView>(R.id.textView)
-        textView.text = "電池残量" + batteryLevel.toString() + "%"
-
-        // WindowManager.LayoutParamsを設定
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION")
                 WindowManager.LayoutParams.TYPE_PHONE
             },
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
 
-        // 画面右上に表示するための調整
-        params.x = 500  // 画面の左端からの距離
-        params.y = -800  // 画面の上端からの距離
-
-        // ウィンドウにオーバーレイを追加
+        params.x = 500
+        params.y = -800
         windowManager.addView(overlayView, params)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // バッテリー状態の変化に応じてオーバーレイの表示を更新
+        val batteryLevel = intent?.getIntExtra("batteryLevel", 0) ?: 0
+        val batteryStatus = intent?.getIntExtra("batteryStatus", 0) ?: 0
+        updateOverlay(batteryLevel, batteryStatus)
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun updateOverlay(batteryLevel: Int, batteryStatus: Int) {
+        val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
+        // バッテリーメーターの画像を更新
+        // batteryStatusなどの情報を使って適切な画像を表示する処理を追加する
+        imageView.setImageResource(R.drawable.battery_mark1)
+
+        val textView = overlayView.findViewById<TextView>(R.id.textView)
+        // バッテリーレベルの表示を更新
+        textView.text = "電池残量: $batteryLevel%"
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // オーバーレイのビューを削除
         windowManager.removeView(overlayView)
     }
 
