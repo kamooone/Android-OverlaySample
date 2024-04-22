@@ -25,9 +25,6 @@ class OverlayService : Service() {
         overlayView = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null)
         sharedPreferences = getSharedPreferences("OverlayPrefs", Context.MODE_PRIVATE)
 
-        // 新しいオーバーレイを追加する前に、古いオーバーレイを削除
-        removeOverlay()
-
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -48,10 +45,6 @@ class OverlayService : Service() {
         val batteryLevel = sharedPreferences.getInt("batteryLevel", 0)
         val batteryStatus = sharedPreferences.getInt("batteryStatus", 0)
         updateOverlay(batteryLevel, batteryStatus)
-    }
-
-    private fun removeOverlay() {
-        windowManager.removeView(overlayView)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
