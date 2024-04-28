@@ -1,12 +1,14 @@
 package com.example.overlay_sample
 
 import android.app.Service
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -29,6 +31,21 @@ class OverlayService : Service() {
         // LayoutInflater クラスの inflate() メソッドを呼び出すことで、指定されたXMLファイルを読み込み、それを表すビューオブジェクトを作成します。
         // このビューオブジェクトは、アプリケーションのUIに表示されたり、プログラムで操作されたりします。
         overlayView = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null)
+
+        // クリックイベントを追加(オーバーレイ全体)
+//        overlayView.setOnClickListener {
+//            // クリック時のアクションをここに定義
+//            Log.d("OverlayService", "オーバーレイクリックイベント")
+//        }
+
+        // オーバーレイで表示している画像に個別にクリックイベントを設定する場合は、その画像のidを取得する
+        val imageView1: ImageView = overlayView.findViewById(R.id.imageView)
+
+        // クリックイベントを追加(オーバーレイ全体)
+        imageView1.setOnClickListener {
+            // クリック時のアクションをここに定義
+            Log.d("OverlayService", "オーバーレイ個別画像クリックイベント")
+        }
 
         // OverlayPrefs という名前のプリファレンスファイルを取得し、sharedPreferences という名前の SharedPreferences インスタンスに代入
         // SharedPreferences は、アプリケーションのデータを保存・読み込みするための仕組みであり、キーと値のペアを格納することができる
