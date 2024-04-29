@@ -5,7 +5,9 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.graphics.PixelFormat
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -14,6 +16,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 
 class OverlayService : Service() {
 
@@ -21,6 +24,14 @@ class OverlayService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: View
     private lateinit var sharedPreferences: SharedPreferences
+
+    private val binder = OverlayBinder()
+
+    inner class OverlayBinder : Binder() {
+        fun getService(): OverlayService {
+            return this@OverlayService
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -110,15 +121,25 @@ class OverlayService : Service() {
     /*
      * オーバーレイで表示している内容を更新する処理
      */
-    private fun updateOverlay(batteryLevel: Int, batteryStatus: Int) {
+    fun updateOverlay(batteryLevel: Int, batteryStatus: Int) {
         // オーバーレイで表示しているバッテリーメーターの画像を更新
-        // (ToDo:batteryStatusなどの情報を使って適切な画像を表示する処理を追加する)
         val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
         imageView.setImageResource(R.drawable.battery_mark1)
 
         // オーバーレイで表示しているバッテリー残量テキストの表示を更新
         val textView = overlayView.findViewById<TextView>(R.id.textView)
         textView.text = "電池残量: $batteryLevel%"
+
+        // SharedPreferencesに保存されているテキストの色に変更
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        // "textColor"キーに対応する整数値を取得し、デフォルトの色はColor.BLACKとする
+        val textColor = sharedPreferences.getInt("textColor", Color.BLACK)
+        // テキストビューのテキスト色を設定
+        textView.setTextColor(textColor)
+
+
+        // ToDo:SharedPreferencesに保存されている画像のタイプの設定に変更
+
     }
 
     /*
@@ -143,7 +164,7 @@ class OverlayService : Service() {
 //        windowManager.removeView(overlayView)
 //    }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    override fun onBind(intent: Intent): IBinder? {
+        return binder
     }
 }
