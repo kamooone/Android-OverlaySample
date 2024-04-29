@@ -34,17 +34,19 @@ class OverlayService : Service() {
 
         // クリックイベントを追加(オーバーレイ全体)
 //        overlayView.setOnClickListener {
-//            // クリック時のアクションをここに定義
 //            Log.d("OverlayService", "オーバーレイクリックイベント")
 //        }
 
         // オーバーレイで表示している画像に個別にクリックイベントを設定する場合は、その画像のidを取得する
         val imageView1: ImageView = overlayView.findViewById(R.id.imageView)
-
-        // クリックイベントを追加(オーバーレイ全体)
         imageView1.setOnClickListener {
-            // クリック時のアクションをここに定義
             Log.d("OverlayService", "オーバーレイ個別画像クリックイベント")
+
+            val intent = Intent(this, SettingActivity::class.java)
+            // FLAG_ACTIVITY_NEW_TASKは、通常、サービスやブロードキャストレシーバなどのコンポーネントからアクティビティを開始する場合に使用されます。
+            // これにより、アクティビティがアプリケーションの中で別のコンテキストで開始され、そのアクティビティが新しいタスク内で独立して実行されます。
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
         }
 
         // OverlayPrefs という名前のプリファレンスファイルを取得し、sharedPreferences という名前の SharedPreferences インスタンスに代入
