@@ -65,5 +65,17 @@ class SettingActivity : AppCompatActivity() {
             overlayService?.updateOverlayTextColor()
         }
 
+        val colorChangeBlackButton: Button = findViewById(R.id.color_black_button)
+        colorChangeBlackButton.setOnClickListener {
+            val selectedColor = Color.BLACK
+            val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putInt("textColor", selectedColor)
+            editor.apply()
+
+            // updateOverlayを呼び出して変更を反映
+            overlayService?.updateOverlayTextColor()
+        }
+
     }
 }
