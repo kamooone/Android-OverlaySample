@@ -25,9 +25,13 @@ class OverlayService : Service() {
     private lateinit var overlayView: View
     private lateinit var sharedPreferences: SharedPreferences
 
+    // Binderは、ServiceとActivity間で通信を行うための仕組み
     private val binder = OverlayBinder()
 
+    // OverlayBinderはOverlayServiceクラス内部で定義されており、これによりOverlayServiceのプライベートなメンバーにアクセスすることができる
+    // inner classは、Kotlinで内部クラスを定義するためのキーワードです。内部クラスは、外部クラス内にネストされたクラスであり、外部クラスのメンバーにアクセスできます。
     inner class OverlayBinder : Binder() {
+        // そのインスタンスが属しているOverlayServiceクラスのインスタンスを返す
         fun getService(): OverlayService {
             return this@OverlayService
         }
@@ -136,10 +140,21 @@ class OverlayService : Service() {
         val textColor = sharedPreferences.getInt("textColor", Color.BLACK)
         // テキストビューのテキスト色を設定
         textView.setTextColor(textColor)
+    }
 
+    /*
+     * オーバーレイで表示しているテキストの色の変更を更新する処理
+     */
+    fun updateOverlayTextColor() {
+        // オーバーレイで表示しているバッテリー残量テキストの色を更新
+        val textView = overlayView.findViewById<TextView>(R.id.textView)
 
-        // ToDo:SharedPreferencesに保存されている画像のタイプの設定に変更
-
+        // SharedPreferencesに保存されているテキストの色に変更
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        // "textColor"キーに対応する整数値を取得し、デフォルトの色はColor.BLACKとする
+        val textColor = sharedPreferences.getInt("textColor", Color.BLACK)
+        // テキストビューのテキスト色を設定
+        textView.setTextColor(textColor)
     }
 
     /*
@@ -159,11 +174,13 @@ class OverlayService : Service() {
     }
 
     // アプリを起動していない時でもオーバーレイの表示の更新を行うため
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        windowManager.removeView(overlayView)
-//    }
+    // override fun onDestroy() {
+    // super.onDestroy()
+    // windowManager.removeView(overlayView)
+    // }
 
+    // onBind()メソッドは、Serviceがバインドされたときに呼び出されます。
+    // バインドされると、クライアントはこのメソッドからIBinderオブジェクトを受け取り、そのオブジェクトを使用してServiceとの通信を行います。
     override fun onBind(intent: Intent): IBinder? {
         return binder
     }
