@@ -158,6 +158,20 @@ class OverlayService : Service() {
     }
 
     /*
+     * オーバーレイで表示している画像の変更を更新する処理
+     */
+    fun updateOverlayImage() {
+        val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
+
+        // SharedPreferencesに保存されている画像リソースIDを取得
+        val sharedPreferences = getSharedPreferences("Image", Context.MODE_PRIVATE)
+        val imageResId = sharedPreferences.getInt("imageResId", R.drawable.battery_mark1)
+
+        // ImageViewに取得した画像リソースIDをセット
+        imageView.setImageResource(imageResId)
+    }
+
+    /*
      * バッテリーレベルとバッテリー状態を SharedPreferences に保存するためのメソッド
      */
     private fun saveBatteryLevel(batteryLevel: Int, batteryStatus: Int) {

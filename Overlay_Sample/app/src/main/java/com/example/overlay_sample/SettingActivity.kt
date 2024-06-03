@@ -98,7 +98,7 @@ class SettingActivity : AppCompatActivity() {
             val newImageResId = R.drawable.battery_mark2
 
             // SharedPreferencesを取得
-            val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val sharedPreferences = getSharedPreferences("Image", Context.MODE_PRIVATE)
 
             // SharedPreferencesの編集モードを開始
             val editor = sharedPreferences.edit()
@@ -109,11 +109,8 @@ class SettingActivity : AppCompatActivity() {
             // 変更を適用
             editor.apply()
 
-            // MainActivityを再起動
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            finish()
+            // updateOverlayを呼び出して変更を反映
+            overlayService?.updateOverlayImage()
         }
 
 
