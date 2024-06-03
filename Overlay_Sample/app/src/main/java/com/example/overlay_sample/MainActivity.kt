@@ -80,6 +80,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // オーバーレイ表示のためのパーミッションを確認する
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+
+            // オーバーレイ権限を付与するための設定画面を開く
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
             launcher.launch(intent)
         } else {

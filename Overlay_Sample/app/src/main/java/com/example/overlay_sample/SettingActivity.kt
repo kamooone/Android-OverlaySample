@@ -56,9 +56,17 @@ class SettingActivity : AppCompatActivity() {
         val colorChangeButton: Button = findViewById(R.id.color_button)
         colorChangeButton.setOnClickListener {
             val selectedColor = Color.RED
+
+            // SharedPreferencesを取得
             val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+            // SharedPreferencesの編集モードを開始
             val editor = sharedPreferences.edit()
+
+            // テキストの色を保存
             editor.putInt("textColor", selectedColor)
+
+            // 変更を適用
             editor.apply()
 
             // updateOverlayを呼び出して変更を反映
@@ -68,14 +76,46 @@ class SettingActivity : AppCompatActivity() {
         val colorChangeBlackButton: Button = findViewById(R.id.color_black_button)
         colorChangeBlackButton.setOnClickListener {
             val selectedColor = Color.BLACK
+
+            // SharedPreferencesを取得
             val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+            // SharedPreferencesの編集モードを開始
             val editor = sharedPreferences.edit()
+
+            // テキストの色を保存
             editor.putInt("textColor", selectedColor)
+
+            // 変更を適用
             editor.apply()
 
             // updateOverlayを呼び出して変更を反映
             overlayService?.updateOverlayTextColor()
         }
+
+        val button: Button = findViewById(R.id.image_change_button)
+        button.setOnClickListener {
+            val newImageResId = R.drawable.battery_mark2
+
+            // SharedPreferencesを取得
+            val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+            // SharedPreferencesの編集モードを開始
+            val editor = sharedPreferences.edit()
+
+            // 画像リソースIDを保存
+            editor.putInt("imageResId", newImageResId)
+
+            // 変更を適用
+            editor.apply()
+
+            // MainActivityを再起動
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        }
+
 
     }
 }
