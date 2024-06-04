@@ -127,8 +127,7 @@ class OverlayService : Service() {
      */
     fun updateOverlay(batteryLevel: Int, batteryStatus: Int) {
         // オーバーレイで表示しているバッテリーメーターの画像を更新
-        val imageView = overlayView.findViewById<ImageView>(R.id.imageView)
-        imageView.setImageResource(R.drawable.battery_mark1)
+        updateOverlayImage()
 
         // オーバーレイで表示しているバッテリー残量テキストの表示を更新
         val textView = overlayView.findViewById<TextView>(R.id.textView)
