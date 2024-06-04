@@ -113,6 +113,24 @@ class SettingActivity : AppCompatActivity() {
             overlayService?.updateOverlayImage()
         }
 
+        val buttonGreenImage: Button = findViewById(R.id.image_green_change_button)
+        buttonGreenImage.setOnClickListener {
+            val newImageResId = R.drawable.battery_mark1
 
+            // SharedPreferencesを取得
+            val sharedPreferences = getSharedPreferences("Image", Context.MODE_PRIVATE)
+
+            // SharedPreferencesの編集モードを開始
+            val editor = sharedPreferences.edit()
+
+            // 画像リソースIDを保存
+            editor.putInt("imageResId", newImageResId)
+
+            // 変更を適用
+            editor.apply()
+
+            // updateOverlayを呼び出して変更を反映
+            overlayService?.updateOverlayImage()
+        }
     }
 }
