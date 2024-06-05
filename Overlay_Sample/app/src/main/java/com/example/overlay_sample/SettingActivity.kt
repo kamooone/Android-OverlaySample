@@ -134,17 +134,17 @@ class SettingActivity : AppCompatActivity() {
 
         val moveLeftButton: Button = findViewById(R.id.move_left_button)
         moveLeftButton.setOnClickListener {
-            overlayService?.moveLeftImage()
+            overlayService?.moveImage(-400)
         }
 
         val moveUpButton: Button = findViewById(R.id.move_up_button)
         moveUpButton.setOnClickListener {
-            overlayService?.moveCenterImage()
+            overlayService?.moveImage(0)
         }
 
         val moveRightButton: Button = findViewById(R.id.move_right_button)
         moveRightButton.setOnClickListener {
-            overlayService?.moveRightImage()
+            overlayService?.moveImage(400)
         }
     }
 }

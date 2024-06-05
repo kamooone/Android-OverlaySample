@@ -171,31 +171,11 @@ class OverlayService : Service() {
     }
 
     /*
-     * バッテリーメータの画像とテキストを左上に移動させる処理
+     * バッテリーメータの画像とテキストの位置を移動させる処理
      */
-    fun moveLeftImage() {
-        // ToDo:オーバレイの表示位置を変更するにはval params = WindowManager.LayoutParams(のparamsの値を修正しないといけない模様
-        // ToDo:移動した位置はPreferencesに保存して、起動時にその位置を取得して初期位置にする
+    fun moveImage(x: Int) {
         val layoutParams = overlayView.layoutParams as WindowManager.LayoutParams
-        layoutParams.x = -400
-        windowManager.updateViewLayout(overlayView, layoutParams)
-    }
-
-    /*
-     * バッテリーメータの画像とテキストを真ん中上に移動させる処理
-     */
-    fun moveCenterImage() {
-        val layoutParams = overlayView.layoutParams as WindowManager.LayoutParams
-        layoutParams.x = -0
-        windowManager.updateViewLayout(overlayView, layoutParams)
-    }
-
-    /*
-     * バッテリーメータの画像とテキストを右上に移動させる処理
-     */
-    fun moveRightImage() {
-        val layoutParams = overlayView.layoutParams as WindowManager.LayoutParams
-        layoutParams.x = 400
+        layoutParams.x = x
         windowManager.updateViewLayout(overlayView, layoutParams)
     }
 
