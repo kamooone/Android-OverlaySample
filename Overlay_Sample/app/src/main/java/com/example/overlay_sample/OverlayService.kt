@@ -68,6 +68,9 @@ class OverlayService : Service() {
         // SharedPreferences は、アプリケーションのデータを保存・読み込みするための仕組みであり、キーと値のペアを格納することができる
         sharedPreferences = getSharedPreferences("OverlayPrefs", Context.MODE_PRIVATE)
 
+        // 保存されたxの値を取得
+        val savedX = sharedPreferences.getInt("overlay_position_x", 500)
+
         // ウィンドウのパラメータを設定
         val params = WindowManager.LayoutParams(
             // コンテンツのサイズに合わせてウィンドウのサイズを調整
@@ -91,7 +94,7 @@ class OverlayService : Service() {
         )
 
         // ウィンドウの表示位置を指定します。
-        params.x = 500
+        params.x = savedX
         params.y = -800
 
         // WindowManagerにoverlayViewを追加
@@ -177,6 +180,11 @@ class OverlayService : Service() {
         val layoutParams = overlayView.layoutParams as WindowManager.LayoutParams
         layoutParams.x = x
         windowManager.updateViewLayout(overlayView, layoutParams)
+
+        // SharedPreferencesにxの値を保存
+        val editor = sharedPreferences.edit()
+        editor.putInt("overlay_position_x", x)
+        editor.apply()
     }
 
     /*
