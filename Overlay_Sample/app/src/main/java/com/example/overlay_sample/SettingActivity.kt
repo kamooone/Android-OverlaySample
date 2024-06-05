@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
-import android.os.BatteryManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
@@ -131,6 +130,21 @@ class SettingActivity : AppCompatActivity() {
 
             // updateOverlayを呼び出して変更を反映
             overlayService?.updateOverlayImage()
+        }
+
+        val moveLeftButton: Button = findViewById(R.id.move_left_button)
+        moveLeftButton.setOnClickListener {
+            overlayService?.moveLeftImage()
+        }
+
+        val moveUpButton: Button = findViewById(R.id.move_up_button)
+        moveUpButton.setOnClickListener {
+            overlayService?.moveCenterImage()
+        }
+
+        val moveRightButton: Button = findViewById(R.id.move_right_button)
+        moveRightButton.setOnClickListener {
+            overlayService?.moveRightImage()
         }
     }
 }
