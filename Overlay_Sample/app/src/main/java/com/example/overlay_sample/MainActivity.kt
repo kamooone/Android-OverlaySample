@@ -8,10 +8,15 @@ import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private var screenOnReceiver: BroadcastReceiver? = null
+    private var screenOffReceiver: BroadcastReceiver? = null
 
     /*
      * registerForActivityResultは別のアクティビティを起動し結果を取得することができるメソッド
@@ -88,6 +93,9 @@ class MainActivity : AppCompatActivity() {
             // パーミッションが既に許可されている場合はOverlayServiceを開始し、ブロードキャストを登録する
             startOverlayServiceAndRegisterBroadcastReceiver()
         }
+
+        registerScreenOnReceiver()
+        registerScreenOffReceiver()
     }
 
     // オーバーレイの表示を開始し、ブロードキャストを登録する関数
@@ -134,10 +142,48 @@ class MainActivity : AppCompatActivity() {
          */
     }
 
-    // アプリを起動していない時でもオーバーレイの表示の更新を行うため
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        // BroadcastReceiverの登録を解除
-//        unregisterReceiver(batteryReceiver)
-//    }
+    private fun registerScreenOnReceiver() {
+        screenOnReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Toast.makeText(context, "Screen ON", Toast.LENGTH_SHORT).show()
+                // スクリーンがオンになった時の処理をここに追加
+                Log.d("ScreenStatus", "Screen ON")
+            }
+        }
+        registerReceiver(screenOnReceiver, IntentFilter(Intent.ACTION_SCREEN_ON))
+    }
+
+    private fun registerScreenOffReceiver() {
+        screenOffReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Toast.makeText(context, "Screen OFF", Toast.LENGTH_SHORT).show()
+                // スクリーンがオフになった時の処理をここに追加
+                Log.d("ScreenStatus", "Screen OFF")
+
+                // ToDo:画面を閉じたらこのバッテリーメータのアプリも完全に終了させる。
+                // ToDo:そして画面をオンにした場合は、バッテリーメータアプリを起動させるアプリを起動することで再度バッテリーメータを立ち上げる流れにする。
+            }
+        }
+        registerReceiver(screenOffReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+    }
+
+    private fun unregisterScreenOnReceiver() {
+        screenOnReceiver?.let {
+            unregisterReceiver(it)
+            screenOnReceiver = null
+        }
+    }
+
+    private fun unregisterScreenOffReceiver() {
+        screenOffReceiver?.let {
+            unregisterReceiver(it)
+            screenOffReceiver = null
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterScreenOnReceiver()
+        unregisterScreenOffReceiver()
+    }
 }
