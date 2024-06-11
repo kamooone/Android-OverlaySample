@@ -159,12 +159,22 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(context, "Screen OFF", Toast.LENGTH_SHORT).show()
                 // スクリーンがオフになった時の処理をここに追加
                 Log.d("ScreenStatus", "Screen OFF")
-
-                // ToDo:画面を閉じたらこのバッテリーメータのアプリも完全に終了させる。
-                // ToDo:そして画面をオンにした場合は、バッテリーメータアプリを起動させるアプリを起動することで再度バッテリーメータを立ち上げる流れにする。
+                // 画面を閉じたらこのバッテリーメータのアプリも完全に終了させる。
+                // そして画面をオンにした場合は、バッテリーメータアプリを起動させるアプリを起動することで再度バッテリーメータを立ち上げる流れにする。
+                stopOverlayServiceAndUnregisterBroadcastReceiver()
             }
         }
         registerReceiver(screenOffReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+    }
+
+    private fun stopOverlayServiceAndUnregisterBroadcastReceiver() {
+        // オーバーレイサービスを停止
+        stopService(Intent(this, OverlayService::class.java))
+        // バッテリー状態のブロードキャストレシーバーを解除
+        unregisterReceiver(batteryReceiver)
+        // スクリーンオン・オフのレシーバーを解除
+        unregisterScreenOnReceiver()
+        unregisterScreenOffReceiver()
     }
 
     private fun unregisterScreenOnReceiver() {
@@ -183,7 +193,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterScreenOnReceiver()
-        unregisterScreenOffReceiver()
+        stopOverlayServiceAndUnregisterBroadcastReceiver()
     }
 }
