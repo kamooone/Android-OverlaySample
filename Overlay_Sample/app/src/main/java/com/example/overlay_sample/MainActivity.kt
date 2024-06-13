@@ -83,19 +83,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // オーバーレイ表示のためのパーミッションを確認する
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-
-            // オーバーレイ権限を付与するための設定画面を開く
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            launcher.launch(intent)
-        } else {
-            // パーミッションが既に許可されている場合はOverlayServiceを開始し、ブロードキャストを登録する
-            startOverlayServiceAndRegisterBroadcastReceiver()
-        }
-
-        registerScreenOnReceiver()
-        registerScreenOffReceiver()
     }
 
     // オーバーレイの表示を開始し、ブロードキャストを登録する関数
@@ -172,6 +159,11 @@ class MainActivity : AppCompatActivity() {
         stopService(Intent(this, OverlayService::class.java))
         // バッテリー状態のブロードキャストレシーバーを解除
         unregisterReceiver(batteryReceiver)
+    }
+
+    private fun finishOverlayServiceAndUnregisterBroadcastReceiver() {
+        // オーバーレイサービスを停止
+        stopService(Intent(this, OverlayService::class.java))
         // スクリーンオン・オフのレシーバーを解除
         unregisterScreenOnReceiver()
         unregisterScreenOffReceiver()
@@ -194,5 +186,24 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopOverlayServiceAndUnregisterBroadcastReceiver()
+        unregisterScreenOnReceiver()
+        unregisterScreenOffReceiver()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopOverlayServiceAndUnregisterBroadcastReceiver()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            launcher.launch(intent)
+        } else {
+            startOverlayServiceAndRegisterBroadcastReceiver()
+        }
+        registerScreenOnReceiver()
+        registerScreenOffReceiver()
     }
 }

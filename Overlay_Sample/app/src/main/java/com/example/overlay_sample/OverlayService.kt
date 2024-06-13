@@ -203,11 +203,10 @@ class OverlayService : Service() {
         editor.apply()
     }
 
-    // アプリを起動していない時でもオーバーレイの表示の更新を行うため
-    // override fun onDestroy() {
-    // super.onDestroy()
-    // windowManager.removeView(overlayView)
-    // }
+    override fun onDestroy() {
+        super.onDestroy()
+        windowManager.removeView(overlayView)
+    }
 
     // onBind()メソッドは、Serviceがバインドされたときに呼び出されます。
     // バインドされると、クライアントはこのメソッドからIBinderオブジェクトを受け取り、そのオブジェクトを使用してServiceとの通信を行います。
