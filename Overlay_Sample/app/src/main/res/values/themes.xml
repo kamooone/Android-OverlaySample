@@ -5,5 +5,18 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+    <!-- Transparent Theme -->
+    <style name="Theme.Overlay_Sample.Transparent" parent="Base.Theme.Overlay_Sample">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- ステータスバーを透明にする -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item> <!-- ステータスバーの文字色を暗くする -->
+    </style>
+
+    <!-- 透明なステータスバーを適用するテーマ -->
     <style name="Theme.Overlay_Sample" parent="Base.Theme.Overlay_Sample" />
 </resources>
