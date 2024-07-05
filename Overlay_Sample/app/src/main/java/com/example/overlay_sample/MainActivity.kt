@@ -7,6 +7,8 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -88,6 +90,11 @@ class MainActivity : AppCompatActivity() {
             // パーミッションが既に許可されている場合はOverlayServiceを開始し、ブロードキャストを登録する
             startOverlayServiceAndRegisterBroadcastReceiver()
         }
+
+        // 10秒後にアプリを終了させてオーバーレイの表示だけにする
+        Handler(Looper.getMainLooper()).postDelayed({
+            finish()
+        }, 10000)
     }
 
     // オーバーレイの表示を開始し、ブロードキャストを登録する関数
