@@ -78,6 +78,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val overlayPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+            // パーミッションが許可された場合は新しいオーバーレイサービスを開始
+            startOverlayServiceAndRegisterBroadcastReceiver()
+
+            // 2秒後にアプリを終了させてオーバーレイの表示だけにする
+            Handler(Looper.getMainLooper()).postDelayed({
+                finish()
+            }, 2000)
+        } else {
+            // パーミッションが拒否された場合の処理
+            // 必要に応じてエラーメッセージを表示するなどの処理を追加
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // オーバーレイ表示のためのパーミッションを確認する
@@ -85,16 +102,16 @@ class MainActivity : AppCompatActivity() {
 
             // オーバーレイ権限を付与するための設定画面を開く
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            launcher.launch(intent)
+            overlayPermissionLauncher.launch(intent)
         } else {
             // パーミッションが既に許可されている場合はOverlayServiceを開始し、ブロードキャストを登録する
             startOverlayServiceAndRegisterBroadcastReceiver()
-        }
 
-        // 10秒後にアプリを終了させてオーバーレイの表示だけにする
-        Handler(Looper.getMainLooper()).postDelayed({
-            finish()
-        }, 10000)
+            // 2秒後にアプリを終了させてオーバーレイの表示だけにする
+            Handler(Looper.getMainLooper()).postDelayed({
+                finish()
+            }, 2000)
+        }
     }
 
     // オーバーレイの表示を開始し、ブロードキャストを登録する関数
